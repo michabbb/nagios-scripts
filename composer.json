@@ -1,0 +1,10 @@
+{
+    "name": "macropage/nagios-scripts",
+    "description": "some nagios check scripts",
+    "authors": [
+        {
+            "name": "Michael Bladowski",
+            "email": "mbladowski@macropage.de"
+        }
+    ]
+}
