@@ -1,3 +1,3 @@
 nagios-scripts
 ==============
-ALPHA
+ALPHA 2
