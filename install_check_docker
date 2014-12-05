@@ -1,0 +1,10 @@
+aptitude install python-pip
+wget https://raw.githubusercontent.com/jsmartin/nagios-docker/master/requirements.txt
+pip install -r requirements.txt
+wget https://raw.githubusercontent.com/jsmartin/nagios-docker/master/check_docker -O /usr/lib/nagios/plugins/check_docker
+chown nagios:nagios /usr/lib/nagios/plugins/check_docker
+chmod +x /usr/lib/nagios/plugins/check_docker
+echo 'command[check_docker]=sudo /usr/lib/nagios/plugins/check_docker' > /etc/nagios/nrpe.d/docker.cfg
+/etc/init.d/nagios-nrpe-server restart
+aptitude install sudo
+echo 'nagios        ALL=(root) NOPASSWD: /usr/lib/nagios/plugins/check_docker' > /etc/sudoers.d/nagios
