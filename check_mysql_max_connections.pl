@@ -45,31 +45,33 @@ if (exists $opt{p}) {
 
 my $host = "127.0.0.1";
 if (exists $opt{H}) {
-	$host = $opt{H};
+        $host = $opt{H};
 }
 
 my $port = 3306;
 if (exists $opt{P}) {
-	$port = $opt{P};
+        $port = $opt{P};
 }
 
 my $socket = "";
 if (exists $opt{S}) {
-	$socket = $opt{S};
+        $socket = $opt{S};
 }
 
 my $cmdline = "/usr/bin/mysql -u $username -p$password";
 if ($socket eq "") {
-	$cmdline = "$cmdline -h $host -P $port";
+        $cmdline = "$cmdline -h $host -P $port";
 } else {
-	$cmdline = "$cmdline -S $socket";
+        $cmdline = "$cmdline -S $socket";
 }
 
 debug("\$cmdline=\"$cmdline\"\n");
 my $query_output_max_connections = `/bin/echo "show variables like 'max_connections'" \| $cmdline 2>/dev/null \| /bin/grep -i "max_connections"`;
 debug("\$query_output_max_connections=\"$query_output_max_connections\"\n");
 unless ($query_output_max_connections =~ /^max_connections\s+(\d+)\s+$/) {
-    print "Unknown: Unable to read output from MySQL\n";
+    print "cmdline: ".$cmdline."\n";
+    print "max_connections: Unable to read output from MySQL\n";
+    print "Output: ".$query_output_max_connections."\n";
     exit $ERRORS{'UNKNOWN'};
 }
 
@@ -78,7 +80,8 @@ my $max_connections = $1;
 my $query_output_max_used_connections = `/bin/echo "show status like 'max_used_connections'" \| $cmdline 2>/dev/null \| /bin/grep -i "max_used_connections"`;
 debug("\$query_output_max_used_connections=\"$query_output_max_used_connections\"\n");
 unless ($query_output_max_used_connections =~ /^max_used_connections\s+(\d+)\s+$/i) {
-    print "Unknown: Unable to read output from MySQL\n";
+    print "max_used_connections: Unable to read output from MySQL\n";
+    print "Output: ".$query_output_max_used_connections."\n";
     exit $ERRORS{'UNKNOWN'};
 }
 
@@ -106,7 +109,7 @@ if ($max_used_connections > $critical_threshold) {
 
 sub usage {
     if (@_ == 1) {
-	print "$0: $_[0].\n";
+        print "$0: $_[0].\n";
     }
     print << "EOF";
 Usage: $0 [options]
@@ -115,11 +118,11 @@ Usage: $0 [options]
   -c THRESHOLD
      critical threshold for number of active connections (default: 10)
   -H HOST
-  	 Connect to TCP address/DNS name (default: 127.0.0.1).
+         Connect to TCP address/DNS name (default: 127.0.0.1).
   -P PORT
-  	 Use this alternate TCP port (default: 3306).
+         Use this alternate TCP port (default: 3306).
   -S SOCKET
-  	 Use this MySQL socket instead of the default/or TCPIP.
+         Use this MySQL socket instead of the default/or TCPIP.
   -u USERNAME
      The MySQL username to use when connecting to the server.
   -p PASSWORD
@@ -133,6 +136,6 @@ EOF
 
 sub debug($) {
     if ($debug) {
-	print STDERR $_[0];
+        print STDERR $_[0];
     }
 }
